@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/header.svg">
-    <img src="assets/header.svg" alt="rmb — README Banger" height="120px">
+    <img src="assets/header.svg" alt="rmb — README Banger" width="100%">
   </picture>
 </p>
 
