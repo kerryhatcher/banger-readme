@@ -6,6 +6,8 @@ pub mod hygiene;
 pub mod image_heuristics;
 #[cfg(feature = "deep")]
 pub mod image_similarity;
+#[cfg(feature = "links")]
+pub mod link_check;
 pub mod report;
 pub mod rules;
 pub mod text_quality;

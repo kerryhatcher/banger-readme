@@ -5,6 +5,8 @@ use crate::score::hygiene;
 use crate::score::image_heuristics;
 #[cfg(feature = "deep")]
 use crate::score::image_similarity;
+#[cfg(feature = "links")]
+use crate::score::link_check;
 use crate::score::report::ScoredReport;
 use crate::score::rules;
 use crate::score::text_quality;
@@ -53,7 +55,7 @@ pub fn find_readme(dir: &Path) -> Option<std::path::PathBuf> {
 }
 
 /// Run the full scoring pipeline against a README.
-pub fn score_readme(raw: &str, repo_dir: Option<&Path>, deep: bool) -> ScoredReport {
+pub fn score_readme(raw: &str, repo_dir: Option<&Path>, deep: bool, links: bool) -> ScoredReport {
     let structure = content::parse_structure(raw);
 
     let content_result = content::analyze(&structure);
@@ -78,10 +80,25 @@ pub fn score_readme(raw: &str, repo_dir: Option<&Path>, deep: bool) -> ScoredRep
         None
     };
 
+    // Link checking is gated behind --links
+    let link_check_result = if links {
+        #[cfg(feature = "links")]
+        {
+            Some(link_check::analyze(&structure, repo_dir))
+        }
+        #[cfg(not(feature = "links"))]
+        {
+            None
+        }
+    } else {
+        None
+    };
+
     let raw_score =
         content_result.score + visual_result.score + hygiene_result.score + funnel_result.score
             + text_quality_result.score + image_heuristics_result.score
-            + image_similarity_result.as_ref().map_or(0.0, |r| r.score);
+            + image_similarity_result.as_ref().map_or(0.0, |r| r.score)
+            + link_check_result.as_ref().map_or(0.0, |r| r.score);
     let penalty = antipattern_result.penalty;
     let final_score = (raw_score - penalty).max(0.0);
     let (grade, label) = rules::grade(final_score);
@@ -98,5 +115,6 @@ pub fn score_readme(raw: &str, repo_dir: Option<&Path>, deep: bool) -> ScoredRep
         text_quality: text_quality_result,
         image_heuristics: image_heuristics_result,
         image_similarity: image_similarity_result,
+        link_check: link_check_result,
     }
 }

@@ -5,6 +5,8 @@ use crate::score::hygiene::HygieneResult;
 use crate::score::image_heuristics::ImageHeuristicsResult;
 #[cfg(feature = "deep")]
 use crate::score::image_similarity::ImageSimilarityResult;
+#[cfg(feature = "links")]
+use crate::score::link_check::LinkCheckResult;
 use crate::score::text_quality::TextQualityResult;
 use crate::score::visuals::VisualResult;
 use colored::*;
@@ -26,6 +28,10 @@ pub struct ScoredReport {
     pub image_similarity: Option<ImageSimilarityResult>,
     #[cfg(not(feature = "deep"))]
     pub image_similarity: Option<()>,
+    #[cfg(feature = "links")]
+    pub link_check: Option<LinkCheckResult>,
+    #[cfg(not(feature = "links"))]
+    pub link_check: Option<()>,
 }
 
 impl ScoredReport {
@@ -109,6 +115,37 @@ impl ScoredReport {
             }
             #[cfg(not(feature = "deep"))]
             let _ = img_sim;
+        }
+
+        // Link Check (only when --links is used)
+        if let Some(ref lc) = self.link_check {
+            #[cfg(feature = "links")]
+            {
+                self.print_category(
+                    "Link Check",
+                    lc.score,
+                    lc.max,
+                    &lc.checks,
+                );
+                // Print link details
+                if !lc.links.is_empty() {
+                    println!("│ Link details:");
+                    for link in &lc.links {
+                        let icon = match link.status.as_str() {
+                            "ok" => "✅",
+                            "broken" => "❌",
+                            "redirect" => "🔀",
+                            "timeout" => "⏱️",
+                            _ => "⚠️",
+                        };
+                        println!("│   {} {} — {}", icon, link.url.dimmed(), link.detail);
+                    }
+                    println!("└──────────────────────────────────────────┘");
+                    println!();
+                }
+            }
+            #[cfg(not(feature = "links"))]
+            let _ = lc;
         }
 
         // Anti-patterns
@@ -290,6 +327,24 @@ impl ScoredReport {
             }
         }
 
+        #[cfg(feature = "links")]
+        if let Some(ref lc) = self.link_check {
+            for check in &lc.checks {
+                if !check.passed {
+                    recs.push(Recommendation {
+                        name: check.name.to_string(),
+                        points: check.max_points,
+                        impact: if check.max_points >= 3.0 {
+                            "high"
+                        } else {
+                            "medium"
+                        },
+                        message: recommendation_message(check.name),
+                    });
+                }
+            }
+        }
+
         // Sort by points descending (highest impact first)
         recs.sort_by(|a, b| {
             b.points
@@ -427,6 +482,15 @@ fn recommendation_message(name: &str) -> String {
         }
         "No placeholder images" => {
             "Replace placeholder images with real screenshots or project graphics".into()
+        }
+        "No broken links" => {
+            "Fix broken links — check that all URLs return 2xx status codes".into()
+        }
+        "No excessive redirects" => {
+            "Update redirected URLs to point directly to their final destinations".into()
+        }
+        "Valid anchor fragments" => {
+            "Fix broken anchor links — headings may have been renamed or removed".into()
         }
         _ => "Review and improve this aspect of your README".into(),
     }

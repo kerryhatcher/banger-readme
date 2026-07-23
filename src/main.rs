@@ -59,6 +59,10 @@ enum Commands {
         /// Enable deep analysis (image similarity comparisons).
         #[arg(long)]
         deep: bool,
+
+        /// Enable link checking (broken link detection).
+        #[arg(long)]
+        links: bool,
     },
 }
 
@@ -83,8 +87,9 @@ fn main() -> Result<()> {
             threshold,
             no_hygiene,
             deep,
+            links,
         } => {
-            cmd_score(&target, json, check, threshold, no_hygiene, deep)?;
+            cmd_score(&target, json, check, threshold, no_hygiene, deep, links)?;
         }
     }
 
@@ -162,6 +167,7 @@ fn cmd_score(
     threshold: u32,
     no_hygiene: bool,
     deep: bool,
+    links: bool,
 ) -> Result<()> {
     use std::path::Path;
 
@@ -197,7 +203,7 @@ fn cmd_score(
         }
     };
 
-    let report = score::engine::score_readme(&raw, repo_dir.map(|p| p as &Path), deep);
+    let report = score::engine::score_readme(&raw, repo_dir.map(|p| p as &Path), deep, links);
 
     if json {
         report.print_json();

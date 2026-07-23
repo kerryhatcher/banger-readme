@@ -1,6 +1,6 @@
 [package]
 name = "banger-readme"
-version = "0.6.0"
+version = "0.7.0"
 edition = "2021"
 description = "A CLI for building and rating great READMEs — scores against research-backed best practices and bootstraps the rmb skill into Pi and Claude Code"
 license = "MIT"
@@ -13,6 +13,7 @@ path = "src/main.rs"
 [features]
 default = []
 deep = []
+links = ["deep"]
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
