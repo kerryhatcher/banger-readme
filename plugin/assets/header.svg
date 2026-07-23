@@ -1,38 +1,91 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" role="img" aria-label="rmb — README BANGER: score your README, install harness plugins for Pi and Claude Code">
+  <title>rmb — README BANGER</title>
   <defs>
-    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#1E3A5F"/>
-      <stop offset="50%" stop-color="#2563EB"/>
-      <stop offset="100%" stop-color="#06B6D4"/>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1035"/>
+      <stop offset="45%" stop-color="#3a1063"/>
+      <stop offset="78%" stop-color="#c81e6a"/>
+      <stop offset="100%" stop-color="#ff8a1e"/>
     </linearGradient>
-    <linearGradient id="textGrad" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#F0F9FF"/>
-      <stop offset="100%" stop-color="#06B6D4"/>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffd23f" stop-opacity="0.55"/>
+      <stop offset="60%" stop-color="#ffd23f" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#ffd23f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="dialTrack" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4a2a70"/>
+      <stop offset="100%" stop-color="#3a1e58"/>
     </linearGradient>
+    <linearGradient id="dialFill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffe14d"/>
+      <stop offset="50%" stop-color="#ff8a1e"/>
+      <stop offset="100%" stop-color="#ff3d7f"/>
+    </linearGradient>
+    <linearGradient id="wordFill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffe14d"/>
+      <stop offset="100%" stop-color="#ff5f6d"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <clipPath id="cardClip">
+      <rect x="0" y="0" width="1200" height="300" rx="28"/>
+    </clipPath>
   </defs>
-  <!-- Background -->
-  <rect width="1200" height="300" fill="url(#bgGrad)"/>
-  <!-- Decorative geometric shapes -->
-  <circle cx="1050" cy="50" r="120" fill="#F0F9FF" opacity="0.03"/>
-  <circle cx="1100" cy="250" r="80" fill="#F0F9FF" opacity="0.05"/>
-  <rect x="50" y="200" width="200" height="200" rx="20" fill="#F0F9FF" opacity="0.03" transform="rotate(15 150 300)"/>
-  <!-- Terminal window (left) -->
-  <rect x="80" y="70" width="340" height="180" rx="12" fill="#0F172A" opacity="0.7"/>
-  <circle cx="100" cy="90" r="5" fill="#F43F5E"/>
-  <circle cx="116" cy="90" r="5" fill="#F59E0B"/>
-  <circle cx="132" cy="90" r="5" fill="#059669"/>
-  <text x="100" y="130" font-family="system-ui, -apple-system, monospace" font-size="18" font-weight="bold" fill="#06B6D4">$</text>
-  <text x="118" y="130" font-family="system-ui, -apple-system, monospace" font-size="18" font-weight="bold" fill="#F0F9FF">rmb score .</text>
-  <rect x="100" y="148" width="280" height="4" rx="2" fill="#2563EB" opacity="0.4"/>
-  <rect x="100" y="160" width="240" height="4" rx="2" fill="#2563EB" opacity="0.3"/>
-  <rect x="100" y="172" width="260" height="4" rx="2" fill="#2563EB" opacity="0.2"/>
-  <rect x="100" y="190" width="200" height="4" rx="2" fill="#059669" opacity="0.5"/>
-  <rect x="100" y="202" width="180" height="4" rx="2" fill="#059669" opacity="0.3"/>
-  <text x="100" y="230" font-family="system-ui, -apple-system, monospace" font-size="14" fill="#94A3B8">README Score: 85/100 [A]</text>
-  <!-- Title (right) -->
-  <text x="480" y="140" font-family="system-ui, -apple-system, sans-serif" font-size="56" font-weight="800" fill="url(#textGrad)" letter-spacing="-1">rmb</text>
-  <text x="480" y="190" font-family="system-ui, -apple-system, sans-serif" font-size="20" fill="#94A3B8" letter-spacing="1">README BANGER</text>
-  <text x="480" y="225" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#64748B">Install plugins for Pi &amp; Claude Code. Score READMEs against best practices.</text>
-  <!-- Bottom accent line -->
-  <rect x="480" y="245" width="80" height="3" rx="1.5" fill="#06B6D4"/>
+
+  <g clip-path="url(#cardClip)">
+    <rect x="0" y="0" width="1200" height="300" fill="url(#bg)"/>
+    <circle cx="1030" cy="150" r="180" fill="url(#glow)"/>
+
+    <!-- starburst behind gauge -->
+    <g transform="translate(1030,150)" opacity="0.5">
+      <path d="M0,-140 L10,-40 L100,-95 L28,-18 L138,4 L26,20 L92,102 L8,32 L-6,140 L-18,32 L-100,96 L-22,18 L-142,-8 L-24,-16 L-96,-100 L-8,-38 Z" fill="#ffd23f"/>
+    </g>
+
+    <!-- confetti -->
+    <g>
+      <rect x="70" y="42" width="14" height="14" rx="3" fill="#ffd23f" transform="rotate(18 77 49)"/>
+      <rect x="150" y="230" width="10" height="10" rx="2" fill="#3ee8d0" transform="rotate(-24 155 235)"/>
+      <circle cx="230" cy="52" r="6" fill="#ff5f6d"/>
+      <rect x="330" y="235" width="12" height="12" rx="2" fill="#8b5cf6" transform="rotate(40 336 241)"/>
+      <circle cx="470" cy="46" r="5" fill="#3ee8d0"/>
+      <rect x="560" y="228" width="10" height="10" rx="2" fill="#ffd23f" transform="rotate(-15 565 233)"/>
+      <circle cx="640" cy="58" r="6" fill="#ff8a1e"/>
+      <rect x="900" y="40" width="10" height="10" rx="2" fill="#ff5f6d" transform="rotate(20 905 45)"/>
+      <circle cx="1170" cy="90" r="5" fill="#3ee8d0"/>
+      <rect x="1150" y="245" width="12" height="12" rx="2" fill="#ffd23f" transform="rotate(-30 1156 251)"/>
+      <circle cx="40" cy="150" r="5" fill="#8b5cf6"/>
+      <circle cx="1180" cy="200" r="6" fill="#ff8a1e"/>
+    </g>
+
+    <!-- soundwave under tagline -->
+    <g fill="#ffffff" opacity="0.85">
+      <rect x="70" y="228" width="6" height="14" rx="2"/>
+      <rect x="82" y="220" width="6" height="22" rx="2"/>
+      <rect x="94" y="224" width="6" height="18" rx="2"/>
+      <rect x="106" y="212" width="6" height="30" rx="2"/>
+      <rect x="118" y="222" width="6" height="20" rx="2"/>
+      <rect x="130" y="230" width="6" height="12" rx="2"/>
+    </g>
+
+    <!-- wordmark -->
+    <text x="66" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-weight="800" font-size="112" fill="url(#wordFill)" filter="url(#softShadow)" letter-spacing="-2">rmb</text>
+
+    <!-- README BANGER label -->
+    <text x="70" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-weight="800" font-size="30" fill="#ffffff" letter-spacing="4">README BANGER</text>
+
+    <!-- tagline -->
+    <text x="70" y="212" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-weight="500" font-size="19" fill="#f4e9ff" opacity="0.92">Score your README. Install harness plugins for Pi and Claude Code.</text>
+
+    <!-- score gauge -->
+    <g transform="translate(1030,150)">
+      <circle r="86" fill="#241338" filter="url(#softShadow)"/>
+      <circle r="72" fill="none" stroke="url(#dialTrack)" stroke-width="16"/>
+      <circle r="72" fill="none" stroke="url(#dialFill)" stroke-width="16" stroke-linecap="round"
+              stroke-dasharray="416.4 452.4" transform="rotate(-90)"/>
+      <text x="0" y="-6" text-anchor="middle" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-weight="800" font-size="56" fill="#ffffff">92</text>
+      <text x="0" y="30" text-anchor="middle" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-weight="700" font-size="16" fill="#ffd23f" letter-spacing="3">GRADE A</text>
+    </g>
+    <text x="1030" y="258" text-anchor="middle" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-weight="700" font-size="16" fill="#ffffff" opacity="0.85">THAT'S A BANGER 🔥</text>
+  </g>
 </svg>
