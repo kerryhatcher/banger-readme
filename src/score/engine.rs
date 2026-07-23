@@ -4,6 +4,7 @@ use crate::score::funnel;
 use crate::score::hygiene;
 use crate::score::report::ScoredReport;
 use crate::score::rules;
+use crate::score::text_quality;
 use crate::score::visuals;
 use anyhow::{Context, Result};
 use std::path::Path;
@@ -57,9 +58,11 @@ pub fn score_readme(raw: &str, repo_dir: Option<&Path>) -> ScoredReport {
     let hygiene_result = hygiene::analyze(&structure, repo_dir);
     let funnel_result = funnel::analyze(&structure);
     let antipattern_result = antipatterns::analyze(&structure);
+    let text_quality_result = text_quality::analyze(&structure);
 
     let raw_score =
-        content_result.score + visual_result.score + hygiene_result.score + funnel_result.score;
+        content_result.score + visual_result.score + hygiene_result.score + funnel_result.score
+            + text_quality_result.score;
     let penalty = antipattern_result.penalty;
     let final_score = (raw_score - penalty).max(0.0);
     let (grade, label) = rules::grade(final_score);
@@ -73,5 +76,6 @@ pub fn score_readme(raw: &str, repo_dir: Option<&Path>) -> ScoredReport {
         hygiene: hygiene_result,
         funnel: funnel_result,
         antipatterns: antipattern_result,
+        text_quality: text_quality_result,
     }
 }

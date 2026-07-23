@@ -2,6 +2,7 @@ use crate::score::antipatterns::AntipatternResult;
 use crate::score::content::ContentResult;
 use crate::score::funnel::FunnelResult;
 use crate::score::hygiene::HygieneResult;
+use crate::score::text_quality::TextQualityResult;
 use crate::score::visuals::VisualResult;
 use colored::*;
 use serde::Serialize;
@@ -16,6 +17,7 @@ pub struct ScoredReport {
     pub hygiene: HygieneResult,
     pub funnel: FunnelResult,
     pub antipatterns: AntipatternResult,
+    pub text_quality: TextQualityResult,
 }
 
 impl ScoredReport {
@@ -68,6 +70,14 @@ impl ScoredReport {
             self.funnel.score,
             self.funnel.max,
             &self.funnel.checks,
+        );
+
+        // Text Quality
+        self.print_category(
+            "Text Quality",
+            self.text_quality.score,
+            self.text_quality.max,
+            &self.text_quality.checks,
         );
 
         // Anti-patterns
@@ -209,6 +219,21 @@ impl ScoredReport {
             }
         }
 
+        for check in &self.text_quality.checks {
+            if !check.passed {
+                recs.push(Recommendation {
+                    name: check.name.to_string(),
+                    points: check.max_points,
+                    impact: if check.max_points >= 3.0 {
+                        "high"
+                    } else {
+                        "medium"
+                    },
+                    message: recommendation_message(check.name),
+                });
+            }
+        }
+
         // Sort by points descending (highest impact first)
         recs.sort_by(|a, b| {
             b.points
@@ -311,6 +336,24 @@ fn recommendation_message(name: &str) -> String {
         }
         "Install before usage" => "Place installation instructions before usage examples".into(),
         "License at bottom" => "Move the license section to the end of the README".into(),
+        "Readability grade (7–10)" => {
+            "Simplify language — target a 7th–10th grade reading level for broad accessibility"
+                .into()
+        }
+        "Cliché-free copy" => {
+            "Replace clichés like 'think outside the box' with specific, original language".into()
+        }
+        "Active voice (≤20% passive)" => {
+            "Rewrite passive sentences in active voice for clearer, more direct communication"
+                .into()
+        }
+        "Positive/welcoming tone" => {
+            "Use more positive, welcoming language to make the project feel approachable".into()
+        }
+        "Sentence variety" => {
+            "Vary sentence length and structure — mix short punchy lines with longer explanations"
+                .into()
+        }
         _ => "Review and improve this aspect of your README".into(),
     }
 }

@@ -75,7 +75,7 @@ checksum = "1505bd5d3d116872e7271a6d4e16d81d0c8570876c8de68093a09ac269d8aac0"
 
 [[package]]
 name = "banger-readme"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -92,7 +92,9 @@ dependencies = [
  "serde_json",
  "serde_yaml",
  "tempfile",
+ "textstat",
  "thiserror 2.0.19",
+ "writing-analysis",
 ]
 
 [[package]]
@@ -1494,6 +1496,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "textstat"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ff99429657f62e68c26b6d9182c79d21b5f0b14646e2eab54a9e6f1b25928faa"
+
+[[package]]
 name = "thiserror"
 version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1672,6 +1680,12 @@ name = "unicode-ident"
 version = "1.0.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
+
+[[package]]
+name = "unicode-segmentation"
+version = "1.13.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c6f5d3c3b1bf09027a88a6bc961fc00497d651009560b5463668dc81b0fa87a8"
 
 [[package]]
 name = "unicode-width"
@@ -1998,6 +2012,17 @@ name = "writeable"
 version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1ffae5123b2d3fc086436f8834ae3ab053a283cfac8fe0a0b8eaae044768a4c4"
+
+[[package]]
+name = "writing-analysis"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6ff0175b750c5da7fd3fed85e203fde0fd597c76dab4588292c5846712a06d00"
+dependencies = [
+ "regex",
+ "thiserror 2.0.19",
+ "unicode-segmentation",
+]
 
 [[package]]
 name = "yoke"

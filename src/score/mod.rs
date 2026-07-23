@@ -5,4 +5,5 @@ pub mod funnel;
 pub mod hygiene;
 pub mod report;
 pub mod rules;
+pub mod text_quality;
 pub mod visuals;

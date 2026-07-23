@@ -1,6 +1,6 @@
 [package]
 name = "banger-readme"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 description = "A CLI for building and rating great READMEs — scores against research-backed best practices and bootstraps the rmb skill into Pi and Claude Code"
 license = "MIT"
@@ -27,3 +27,5 @@ dialoguer = "0.11"
 regex = "1"
 reqwest = { version = "0.12", features = ["blocking"] }
 pulldown-cmark = "0.12"
+writing-analysis = "0.1"
+textstat = "0.1"
