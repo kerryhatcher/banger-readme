@@ -1,6 +1,6 @@
 {
   "name": "banger-readme",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Create outstanding, aesthetically pleasing, genuinely useful README files for GitHub repositories. Generates SVG logos and headers, scores the README with the rmb CLI tool, and iterates until reaching an A grade.",
   "author": {
     "name": "Kerry Hatcher",
