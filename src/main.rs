@@ -68,6 +68,20 @@ enum Commands {
         claude: bool,
     },
 
+    /// Install the bundled banger-readme plugin (fetches from GitHub).
+    ///
+    /// Since cargo install only ships the binary, this command fetches
+    /// the plugin files from the repo and installs them to Pi and Claude Code.
+    SelfInstall {
+        /// Only install for Pi coding harness.
+        #[arg(long, conflicts_with = "claude_only")]
+        pi_only: bool,
+
+        /// Only install for Claude Code.
+        #[arg(long, conflicts_with = "pi_only")]
+        claude_only: bool,
+    },
+
     /// Score a README against best-practice criteria.
     Score {
         /// Path to README.md, URL, or local directory containing a README.
@@ -113,6 +127,9 @@ fn main() -> Result<()> {
         }
         Commands::Remove { name, pi, claude } => {
             cmd_remove(&name, pi, claude)?;
+        }
+        Commands::SelfInstall { pi_only, claude_only } => {
+            cmd_self_install(pi_only, claude_only)?;
         }
         Commands::Score {
             target,
@@ -355,6 +372,68 @@ fn extract_frontmatter_desc(content: &str) -> Result<String> {
         }
     }
     anyhow::bail!("No description found")
+}
+
+const SELF_INSTALL_REPO: &str = "https://github.com/kerryhatcher/banger-readme";
+
+fn cmd_self_install(pi_only: bool, claude_only: bool) -> Result<()> {
+    println!(
+        "{} Fetching banger-readme plugin from GitHub...",
+        "→".cyan().bold()
+    );
+
+    // Clone the repo to a temp directory
+    let temp = git::clone_to_temp(SELF_INSTALL_REPO, None)?;
+    let plugin_dir = temp.path().join("plugin");
+
+    if !plugin_dir.exists() {
+        anyhow::bail!("Plugin directory not found in cloned repo");
+    }
+
+    println!("{} Detecting plugin type...", "→".cyan().bold());
+
+    let plugin = plugin::detect(&plugin_dir)?;
+
+    println!(
+        "{} Detected: {} — {}",
+        "✓".green().bold(),
+        plugin.name().green(),
+        plugin.description().dimmed()
+    );
+
+    let paths = config::InstallPaths::detect();
+
+    // Get git metadata
+    let repo = git2::Repository::open(temp.path()).ok();
+    let commit_sha = repo.as_ref().and_then(|r| git::head_sha(r).ok());
+
+    match &plugin {
+        plugin::PluginType::PiSkill(_) if claude_only => {
+            println!(
+                "{} Skipping Pi skill (--claude-only specified)",
+                "⚠".yellow()
+            );
+        }
+        plugin::PluginType::ClaudePlugin(_) if pi_only => {
+            println!(
+                "{} Skipping Claude Code plugin (--pi-only specified)",
+                "⚠".yellow()
+            );
+        }
+        _ => {
+            install::install_from_dir(
+                &plugin_dir,
+                &plugin,
+                &paths,
+                Some(SELF_INSTALL_REPO),
+                commit_sha.as_deref(),
+            )?;
+        }
+    }
+
+    println!("\n{} Done!", "🎉".green().bold());
+
+    Ok(())
 }
 
 fn cmd_score(target: &str, json: bool, check: bool, threshold: u32, no_hygiene: bool) -> Result<()> {
