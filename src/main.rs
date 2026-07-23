@@ -21,10 +21,12 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Install a plugin from a git repository.
+    /// Install a plugin from a git repository, local directory, or the bundled banger-readme plugin.
+    ///
+    /// When no URL is given, fetches and installs the bundled banger-readme plugin from GitHub.
     Install {
-        /// Git URL of the plugin repository.
-        url: String,
+        /// Git URL or local path of the plugin repository (optional — defaults to banger-readme self-install).
+        url: Option<String>,
 
         /// Optional branch or tag to check out.
         #[arg(short, long)]
@@ -68,20 +70,6 @@ enum Commands {
         claude: bool,
     },
 
-    /// Install the bundled banger-readme plugin (fetches from GitHub).
-    ///
-    /// Since cargo install only ships the binary, this command fetches
-    /// the plugin files from the repo and installs them to Pi and Claude Code.
-    SelfInstall {
-        /// Only install for Pi coding harness.
-        #[arg(long, conflicts_with = "claude_only")]
-        pi_only: bool,
-
-        /// Only install for Claude Code.
-        #[arg(long, conflicts_with = "pi_only")]
-        claude_only: bool,
-    },
-
     /// Score a README against best-practice criteria.
     Score {
         /// Path to README.md, URL, or local directory containing a README.
@@ -120,16 +108,16 @@ fn main() -> Result<()> {
             claude_only,
             force: _force,
         } => {
-            cmd_install(&url, branch.as_deref(), pi_only, claude_only)?;
+            match url {
+                Some(ref u) => cmd_install(u, branch.as_deref(), pi_only, claude_only)?,
+                None => cmd_self_install(pi_only, claude_only)?,
+            }
         }
         Commands::List { pi, claude } => {
             cmd_list(pi, claude)?;
         }
         Commands::Remove { name, pi, claude } => {
             cmd_remove(&name, pi, claude)?;
-        }
-        Commands::SelfInstall { pi_only, claude_only } => {
-            cmd_self_install(pi_only, claude_only)?;
         }
         Commands::Score {
             target,
