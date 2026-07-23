@@ -106,13 +106,10 @@ pub fn parse_structure(raw: &str) -> ReadmeStructure {
         match event {
             Event::Start(Tag::CodeBlock(kind)) => {
                 structure.code_block_count += 1;
-                match kind {
-                    CodeBlockKind::Fenced(lang) => {
-                        if !lang.is_empty() {
-                            structure.lang_code_blocks += 1;
-                        }
+                if let CodeBlockKind::Fenced(lang) = kind {
+                    if !lang.is_empty() {
+                        structure.lang_code_blocks += 1;
                     }
-                    _ => {}
                 }
             }
             Event::End(TagEnd::CodeBlock) => {}
@@ -127,7 +124,9 @@ pub fn parse_structure(raw: &str) -> ReadmeStructure {
                         .headings
                         .push((current_header_level, current_header_text.clone()));
                     structure.heading_lines.push(0);
-                    if current_header_text.chars().all(|c| c.is_uppercase() || !c.is_alphabetic())
+                    if current_header_text
+                        .chars()
+                        .all(|c| c.is_uppercase() || !c.is_alphabetic())
                         && current_header_text.chars().any(|c| c.is_alphabetic())
                     {
                         structure.all_caps_headers += 1;
@@ -176,8 +175,10 @@ pub fn parse_structure(raw: &str) -> ReadmeStructure {
     structure.badge_count = RE_BADGE_URL.find_iter(raw).count();
     structure.toc_link_count = RE_TOC_LINK.find_iter(raw).count();
     structure.details_count = RE_DETAILS_TAG.find_iter(raw).count();
-    structure.has_dark_mode = RE_DARK_MODE.is_match(raw) || raw.contains("prefers-color-scheme: dark");
-    structure.has_light_mode = RE_LIGHT_MODE.is_match(raw) || raw.contains("prefers-color-scheme: light");
+    structure.has_dark_mode =
+        RE_DARK_MODE.is_match(raw) || raw.contains("prefers-color-scheme: dark");
+    structure.has_light_mode =
+        RE_LIGHT_MODE.is_match(raw) || raw.contains("prefers-color-scheme: light");
     structure.has_gif = RE_GIF.is_match(raw);
     structure.placeholder_count = RE_PLACEHOLDER.find_iter(raw).count();
 
@@ -212,14 +213,18 @@ pub fn parse_structure(raw: &str) -> ReadmeStructure {
     }
 
     // Check for logo (image in first 20 lines)
-    let first_twenty: String = lines.iter().take(20).cloned().collect::<Vec<_>>().join("\n");
+    let first_twenty: String = lines
+        .iter()
+        .take(20)
+        .cloned()
+        .collect::<Vec<_>>()
+        .join("\n");
     let has_html_logo = RE_IMAGE_TAG.is_match(&first_twenty)
         && (first_twenty.contains("height")
             || first_twenty.contains("width")
             || first_twenty.to_lowercase().contains("logo"));
     let has_md_logo = RE_MD_IMAGE.is_match(&first_twenty)
-        && (first_twenty.to_lowercase().contains("logo")
-            || first_twenty.contains(".svg"));
+        && (first_twenty.to_lowercase().contains("logo") || first_twenty.contains(".svg"));
     structure.has_logo = has_html_logo || has_md_logo;
 
     // Check badge organization (relaxed: only fail if >5 on a single line)
@@ -234,7 +239,7 @@ pub fn parse_structure(raw: &str) -> ReadmeStructure {
     // Check images without alt text
     structure.images_no_alt = RE_MD_IMAGE
         .captures_iter(raw)
-        .filter(|cap| cap.get(1).map_or(true, |m| m.as_str().trim().is_empty()))
+        .filter(|cap| cap.get(1).is_none_or(|m| m.as_str().trim().is_empty()))
         .count();
 
     // Check if first heading is an H1 (redundant with repo name)
@@ -261,13 +266,13 @@ fn strip_html_tags(raw: &str) -> String {
 /// Extract headings from HTML <h1>-<h4> tags.
 fn extract_html_headings(raw: &str) -> Vec<(usize, String)> {
     let mut headings = Vec::new();
+    let inner_tag_re = regex::Regex::new(r"<[^>]+>").unwrap();
     for level in 1..=4 {
         let tag = format!("h{}", level);
         let re = regex::Regex::new(&format!(r"<{}[^>]*>\s*(.*?)\s*</{}>", tag, tag)).unwrap();
         for cap in re.captures_iter(raw) {
             let text = cap.get(1).unwrap().as_str().trim().to_string();
             // Strip inner HTML tags from the heading text
-            let inner_tag_re = regex::Regex::new(r"<[^>]+>").unwrap();
             let clean = inner_tag_re.replace_all(&text, "").to_string();
             if !clean.is_empty() {
                 headings.push((level, clean));
@@ -311,7 +316,12 @@ fn check_line_length(lines: &[String]) -> bool {
 
 /// Check if a fenced code block appears in the first 30 lines (implicit quick start).
 fn check_early_code_block(lines: &[String]) -> bool {
-    let first_30: String = lines.iter().take(30).cloned().collect::<Vec<_>>().join("\n");
+    let first_30: String = lines
+        .iter()
+        .take(30)
+        .cloned()
+        .collect::<Vec<_>>()
+        .join("\n");
     first_30.contains("```")
 }
 
@@ -366,8 +376,7 @@ pub fn analyze(structure: &ReadmeStructure) -> ContentResult {
     }
 
     // 7. Table of Contents (2 pts)
-    let has_toc = has_section_merged(structure, TOC_PATTERNS)
-        || structure.toc_link_count >= 5;
+    let has_toc = has_section_merged(structure, TOC_PATTERNS) || structure.toc_link_count >= 5;
     score += add_check("Table of Contents", has_toc, 2.0, 1.0);
 
     // 8. The "Why" (2 pts)
@@ -395,7 +404,12 @@ pub fn analyze(structure: &ReadmeStructure) -> ContentResult {
     // 11. API Reference (2 pts) — explicit OR docs link section
     let has_api = has_section_merged(structure, API_PATTERNS)
         || has_section_merged(structure, &["documentation", "docs"]);
-    score += add_check("API Reference", has_api, 2.0, if has_api { 1.0 } else { 0.0 });
+    score += add_check(
+        "API Reference",
+        has_api,
+        2.0,
+        if has_api { 1.0 } else { 0.0 },
+    );
 
     // 12. Contributing (2 pts)
     let has_contrib = has_section_merged(structure, CONTRIBUTING_PATTERNS);
@@ -459,7 +473,7 @@ fn has_section(headings: &[(usize, String)], patterns: &[&str]) -> bool {
 /// Check if a section's content is primarily links (external docs).
 fn is_link_heavy_section(structure: &ReadmeStructure, patterns: &[&str]) -> bool {
     // Find the section, then check if the content after it is mostly links
-    for (_i, (_, text)) in structure.headings.iter().enumerate() {
+    for (_, text) in structure.headings.iter() {
         if heading_matches(text, patterns) {
             // Look at the next ~200 chars after this heading in the raw text
             if let Some(pos) = structure.raw.to_lowercase().find(&text.to_lowercase()) {
