@@ -48,7 +48,7 @@ Both features work without any AI or API calls — everything runs locally in mi
 
 ```bash
 # Install
-cargo install --git https://github.com/kerryhatcher/banger-readme
+cargo install banger-readme
 
 # Score a README
 rmb score .
@@ -196,7 +196,7 @@ The binary will be at `target/release/rmb`.
 ### Via Cargo
 
 ```bash
-cargo install --git https://github.com/kerryhatcher/banger-readme
+cargo install banger-readme
 ```
 
 ### Running Tests
