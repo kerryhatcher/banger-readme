@@ -3,6 +3,7 @@ pub mod content;
 pub mod engine;
 pub mod funnel;
 pub mod hygiene;
+pub mod image_heuristics;
 pub mod report;
 pub mod rules;
 pub mod text_quality;

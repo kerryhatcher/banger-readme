@@ -2,6 +2,7 @@ use crate::score::antipatterns::AntipatternResult;
 use crate::score::content::ContentResult;
 use crate::score::funnel::FunnelResult;
 use crate::score::hygiene::HygieneResult;
+use crate::score::image_heuristics::ImageHeuristicsResult;
 use crate::score::text_quality::TextQualityResult;
 use crate::score::visuals::VisualResult;
 use colored::*;
@@ -18,6 +19,7 @@ pub struct ScoredReport {
     pub funnel: FunnelResult,
     pub antipatterns: AntipatternResult,
     pub text_quality: TextQualityResult,
+    pub image_heuristics: ImageHeuristicsResult,
 }
 
 impl ScoredReport {
@@ -78,6 +80,14 @@ impl ScoredReport {
             self.text_quality.score,
             self.text_quality.max,
             &self.text_quality.checks,
+        );
+
+        // Image Heuristics
+        self.print_category(
+            "Image Heuristics",
+            self.image_heuristics.score,
+            self.image_heuristics.max,
+            &self.image_heuristics.checks,
         );
 
         // Anti-patterns
@@ -234,6 +244,17 @@ impl ScoredReport {
             }
         }
 
+        for check in &self.image_heuristics.checks {
+            if !check.passed {
+                recs.push(Recommendation {
+                    name: check.name.to_string(),
+                    points: check.max_points,
+                    impact: "medium",
+                    message: recommendation_message(check.name),
+                });
+            }
+        }
+
         // Sort by points descending (highest impact first)
         recs.sort_by(|a, b| {
             b.points
@@ -352,6 +373,17 @@ fn recommendation_message(name: &str) -> String {
         }
         "Sentence variety" => {
             "Vary sentence length and structure — mix short punchy lines with longer explanations"
+                .into()
+        }
+        "Logo dimensions (≥128×128)" => {
+            "Use a logo at least 128×128px for sharp display on HiDPI/Retina screens".into()
+        }
+        "Banner width (≥1200px)" => {
+            "Use a header banner at least 1200px wide to fill the GitHub README container"
+                .into()
+        }
+        "Image format optimized" => {
+            "Optimize images — use SVG for logos, PNG for screenshots, keep files under 1MB"
                 .into()
         }
         _ => "Review and improve this aspect of your README".into(),
