@@ -14,6 +14,8 @@ pub enum PluginType {
         pi: PiSkillMeta,
         claude: ClaudePluginMeta,
     },
+    /// An Open Plugin (https://open-plugins.com/) with .plugin/plugin.json manifest.
+    OpenPlugin(OpenPluginMeta),
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -30,6 +32,22 @@ pub struct ClaudePluginMeta {
     /// Subdirectories to install (commands, agents, skills, hooks, etc.)
     #[allow(dead_code)]
     pub components: Vec<String>,
+}
+
+/// Metadata from an Open Plugin manifest (.plugin/plugin.json).
+#[derive(Debug, Clone)]
+pub struct OpenPluginMeta {
+    pub name: String,
+    pub version: Option<String>,
+    pub description: Option<String>,
+    #[allow(dead_code)]
+    pub author: Option<String>,
+    #[allow(dead_code)]
+    pub license: Option<String>,
+    /// Skills discovered in the plugin's skills/ directory.
+    pub skills: Vec<PiSkillMeta>,
+    /// Path to the skills directory within the plugin.
+    pub skills_dir: Option<std::path::PathBuf>,
 }
 
 /// Frontmatter from a SKILL.md file.
@@ -49,8 +67,33 @@ struct ClaudePluginManifest {
     components: Vec<String>,
 }
 
+/// Structure of an Open Plugin manifest (.plugin/plugin.json).
+#[derive(Debug, Deserialize)]
+struct OpenPluginManifest {
+    name: String,
+    version: Option<String>,
+    description: Option<String>,
+    author: Option<OpenPluginAuthor>,
+    license: Option<String>,
+    #[allow(dead_code)]
+    skills: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct OpenPluginAuthor {
+    name: Option<String>,
+    #[allow(dead_code)]
+    url: Option<String>,
+}
+
 /// Detect what kind of plugin is in the given directory.
 pub fn detect(dir: &Path) -> Result<PluginType> {
+    // Check for Open Plugin format first (.plugin/plugin.json)
+    let open_plugin_json = dir.join(".plugin").join("plugin.json");
+    if open_plugin_json.exists() {
+        return detect_open_plugin(dir, &open_plugin_json);
+    }
+
     let skill_md = dir.join("SKILL.md");
     let claude_plugin_json = dir.join(".claude-plugin.json");
     let plugin_json = dir.join("plugin.json");
@@ -83,14 +126,68 @@ pub fn detect(dir: &Path) -> Result<PluginType> {
             Ok(PluginType::ClaudePlugin(claude))
         }
         (false, false) => {
-            // Try to infer: if there's a SKILL.md anywhere, treat as Pi skill
-            // Otherwise, treat as a generic Claude Code plugin
             anyhow::bail!(
-                "No SKILL.md or .claude-plugin.json/plugin.json found in {}",
+                "No SKILL.md, .claude-plugin.json, or .plugin/plugin.json found in {}",
                 dir.display()
             );
         }
     }
+}
+
+/// Detect an Open Plugin and discover its skills.
+fn detect_open_plugin(dir: &Path, manifest_path: &Path) -> Result<PluginType> {
+    let content =
+        std::fs::read_to_string(manifest_path).context("Failed to read .plugin/plugin.json")?;
+
+    let manifest: OpenPluginManifest =
+        serde_json::from_str(&content).context("Failed to parse Open Plugin manifest")?;
+
+    // Discover skills in the skills/ directory
+    let skills_dir = dir.join("skills");
+    let mut skills = Vec::new();
+
+    if skills_dir.exists() && skills_dir.is_dir() {
+        for entry in std::fs::read_dir(&skills_dir)
+            .context("Failed to read skills directory")?
+        {
+            let entry = entry?;
+            let skill_path = entry.path();
+            if skill_path.is_dir() {
+                let skill_md = skill_path.join("SKILL.md");
+                if skill_md.exists() {
+                    if let Ok(meta) = parse_skill_md(&skill_md) {
+                        skills.push(meta);
+                    }
+                }
+            }
+        }
+    }
+
+    // Also check for root SKILL.md (single-skill plugin)
+    if skills.is_empty() {
+        let root_skill = dir.join("SKILL.md");
+        if root_skill.exists() {
+            if let Ok(meta) = parse_skill_md(&root_skill) {
+                skills.push(meta);
+            }
+        }
+    }
+
+    let author = manifest.author.and_then(|a| a.name);
+
+    Ok(PluginType::OpenPlugin(OpenPluginMeta {
+        name: manifest.name,
+        version: manifest.version,
+        description: manifest.description,
+        author,
+        license: manifest.license,
+        skills,
+        skills_dir: if skills_dir.exists() {
+            Some(skills_dir)
+        } else {
+            None
+        },
+    }))
 }
 
 fn parse_skill_md(path: &Path) -> Result<PiSkillMeta> {
@@ -156,6 +253,7 @@ impl PluginType {
             PluginType::PiSkill(m) => &m.name,
             PluginType::ClaudePlugin(m) => &m.name,
             PluginType::Both { pi, .. } => &pi.name,
+            PluginType::OpenPlugin(m) => &m.name,
         }
     }
 
@@ -164,6 +262,7 @@ impl PluginType {
             PluginType::PiSkill(m) => &m.description,
             PluginType::ClaudePlugin(m) => m.description.as_deref().unwrap_or("No description"),
             PluginType::Both { pi, .. } => &pi.description,
+            PluginType::OpenPlugin(m) => m.description.as_deref().unwrap_or("No description"),
         }
     }
 }

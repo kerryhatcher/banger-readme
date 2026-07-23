@@ -129,14 +129,32 @@ fn main() -> Result<()> {
 }
 
 fn cmd_install(url: &str, branch: Option<&str>, pi_only: bool, claude_only: bool) -> Result<()> {
-    println!("{} Cloning {}...", "→".cyan().bold(), url.dimmed());
+    use std::path::Path;
 
-    let temp = git::clone_to_temp(url, branch)?;
-    let dir = temp.path();
+    // Check if the target is a local directory
+    let local_path = Path::new(url);
+    let (_temp, dir) = if local_path.is_dir() {
+        println!(
+            "{} Using local directory {}...",
+            "→".cyan().bold(),
+            url.dimmed()
+        );
+        // Create a dummy temp dir that won't be used — we need the TempDir for the lifetime
+        let t = tempfile::TempDir::new()?;
+        let d = local_path.to_path_buf();
+        (Some(t), d)
+    } else {
+        println!("{} Cloning {}...", "→".cyan().bold(), url.dimmed());
+        let t = git::clone_to_temp(url, branch)?;
+        let d = t.path().to_path_buf();
+        (Some(t), d)
+    };
+
+    let dir_ref: &Path = dir.as_ref();
 
     println!("{} Detecting plugin type...", "→".cyan().bold());
 
-    let plugin = plugin::detect(dir)?;
+    let plugin = plugin::detect(dir_ref)?;
 
     println!(
         "{} Detected: {} — {}",
@@ -148,7 +166,7 @@ fn cmd_install(url: &str, branch: Option<&str>, pi_only: bool, claude_only: bool
     let paths = config::InstallPaths::detect();
 
     // Get git metadata
-    let repo = git2::Repository::open(dir).ok();
+    let repo = git2::Repository::open(dir_ref).ok();
     let commit_sha = repo.as_ref().and_then(|r| git::head_sha(r).ok());
 
     match &plugin {
@@ -165,7 +183,7 @@ fn cmd_install(url: &str, branch: Option<&str>, pi_only: bool, claude_only: bool
             );
         }
         _ => {
-            install::install_from_dir(dir, &plugin, &paths, Some(url), commit_sha.as_deref())?;
+            install::install_from_dir(dir_ref, &plugin, &paths, Some(url), commit_sha.as_deref())?;
         }
     }
 

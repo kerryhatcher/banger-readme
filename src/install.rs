@@ -26,6 +26,9 @@ pub fn install_from_dir(
             install_pi_skill(dir, pi, paths)?;
             install_claude_plugin(dir, claude, paths, git_url, commit_sha)?;
         }
+        PluginType::OpenPlugin(meta) => {
+            install_open_plugin(dir, meta, paths, git_url, commit_sha)?;
+        }
     }
     Ok(())
 }
@@ -274,6 +277,52 @@ fn chrono_now() -> String {
 
 fn is_leap(y: i64) -> bool {
     (y % 4 == 0 && y % 100 != 0) || (y % 400 == 0)
+}
+
+/// Install an Open Plugin by copying its skills to Pi and registering with Claude Code.
+fn install_open_plugin(
+    dir: &Path,
+    meta: &crate::plugin::OpenPluginMeta,
+    paths: &InstallPaths,
+    git_url: Option<&str>,
+    commit_sha: Option<&str>,
+) -> Result<()> {
+    println!(
+        "{} Installing Open Plugin '{}' (v{})...",
+        "→".cyan().bold(),
+        meta.name.green(),
+        meta.version.as_deref().unwrap_or("unknown")
+    );
+
+    // Install each skill to Pi
+    if let Some(ref skills_dir) = meta.skills_dir {
+        for skill_meta in &meta.skills {
+            let skill_src = skills_dir.join(&skill_meta.name);
+            if skill_src.exists() {
+                install_pi_skill(&skill_src, skill_meta, paths)?;
+            }
+        }
+    } else if !meta.skills.is_empty() {
+        // Root SKILL.md — install the whole directory as a single skill
+        install_pi_skill(dir, &meta.skills[0], paths)?;
+    }
+
+    // Also install as Claude Code plugin
+    let claude_meta = crate::plugin::ClaudePluginMeta {
+        name: meta.name.clone(),
+        version: meta.version.clone(),
+        description: meta.description.clone(),
+        components: vec!["skills".to_string()],
+    };
+    install_claude_plugin(dir, &claude_meta, paths, git_url, commit_sha)?;
+
+    println!(
+        "  {} Open Plugin '{}' installed successfully",
+        "✓".green().bold(),
+        meta.name.green()
+    );
+
+    Ok(())
 }
 
 /// Recursively copy a directory.
