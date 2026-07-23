@@ -44,7 +44,11 @@ pub fn analyze(structure: &ReadmeStructure) -> AntipatternResult {
     findings.push(Finding {
         name: "Duplicate title (H1 = repo name)",
         detected: structure.first_h1_is_title,
-        penalty: if structure.first_h1_is_title { 1.0 } else { 0.0 },
+        penalty: if structure.first_h1_is_title {
+            1.0
+        } else {
+            0.0
+        },
         detail: if structure.first_h1_is_title {
             "First heading is an H1 — consider starting with a logo instead".into()
         } else {

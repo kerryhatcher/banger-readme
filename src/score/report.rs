@@ -24,25 +24,18 @@ impl ScoredReport {
         let percentile = benchmark_percentile(self.score);
         // Header
         println!();
-        println!(
-            "╔══════════════════════════════════════════════════╗"
-        );
+        println!("╔══════════════════════════════════════════════════╗");
         println!(
             "║         README Score: {:<3}/100  [{}]           ║",
             self.score as u32,
             self.grade.bold()
         );
-        println!(
-            "║         {:^38} ║",
-            format!("\"{}\"", self.label).dimmed()
-        );
+        println!("║         {:^38} ║", format!("\"{}\"", self.label).dimmed());
         println!(
             "║         Top {:.0}% of open source READMEs       ║",
             (100.0 - percentile)
         );
-        println!(
-            "╚══════════════════════════════════════════════════╝"
-        );
+        println!("╚══════════════════════════════════════════════════╝");
         println!();
 
         // Content
@@ -87,11 +80,7 @@ impl ScoredReport {
                 );
                 for finding in &self.antipatterns.findings {
                     if finding.detected {
-                        println!(
-                            "│ {} {}",
-                            "⚠".yellow(),
-                            finding.name.red()
-                        );
+                        println!("│ {} {}", "⚠".yellow(), finding.name.red());
                         if !finding.detail.is_empty() {
                             println!("│   {}", finding.detail.dimmed());
                         }
@@ -104,10 +93,7 @@ impl ScoredReport {
 
         // Recommendations
         println!("{}", "─".repeat(44));
-        println!(
-            "{} Top Recommendations (by impact):",
-            "🎯".bold()
-        );
+        println!("{} Top Recommendations (by impact):", "🎯".bold());
 
         let recs = self.generate_recommendations();
         for (i, rec) in recs.iter().enumerate() {
@@ -131,12 +117,7 @@ impl ScoredReport {
         max: f64,
         checks: &[crate::score::content::Check],
     ) {
-        println!(
-            "┌─ {} ────── {:.0}/{:.0} ─────┐",
-            name,
-            score,
-            max
-        );
+        println!("┌─ {} ────── {:.0}/{:.0} ─────┐", name, score, max);
         for check in checks {
             if check.passed && check.confidence >= 1.0 {
                 println!("│ {} {}", "✅".green(), check.name);
@@ -229,7 +210,11 @@ impl ScoredReport {
         }
 
         // Sort by points descending (highest impact first)
-        recs.sort_by(|a, b| b.points.partial_cmp(&a.points).unwrap_or(std::cmp::Ordering::Equal));
+        recs.sort_by(|a, b| {
+            b.points
+                .partial_cmp(&a.points)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
         recs.truncate(5);
         recs
     }
@@ -247,41 +232,83 @@ fn recommendation_message(name: &str) -> String {
         "Logo/Banner" => "Add a project logo or banner image at the top of your README".into(),
         "Badges" => "Add CI, version, and license badges for instant trust signals".into(),
         "One-liner" => "Add a clear one-sentence description of what your project does".into(),
-        "Demo GIF/Screenshot" => "Add an animated GIF or screenshot showing your project in action — highest ROI change".into(),
-        "Feature Highlights" => "Add a bulleted list of key features that set your project apart".into(),
-        "Quick Start" => "Add a quick start section with copy-paste commands to get running in 60 seconds".into(),
-        "Table of Contents" => "Add a table of contents for easy navigation (for READMEs longer than 2 scrolls)".into(),
-        "The \"Why\"" => "Add a section explaining the problem your project solves and why it exists".into(),
-        "Installation" => "Add clear installation instructions covering all supported platforms".into(),
+        "Demo GIF/Screenshot" => {
+            "Add an animated GIF or screenshot showing your project in action — highest ROI change"
+                .into()
+        }
+        "Feature Highlights" => {
+            "Add a bulleted list of key features that set your project apart".into()
+        }
+        "Quick Start" => {
+            "Add a quick start section with copy-paste commands to get running in 60 seconds".into()
+        }
+        "Table of Contents" => {
+            "Add a table of contents for easy navigation (for READMEs longer than 2 scrolls)".into()
+        }
+        "The \"Why\"" => {
+            "Add a section explaining the problem your project solves and why it exists".into()
+        }
+        "Installation" => {
+            "Add clear installation instructions covering all supported platforms".into()
+        }
         "Usage/Examples" => "Add code examples showing real-world usage of your project".into(),
         "API Reference" => "Add an API reference section or link to full documentation".into(),
         "Contributing" => "Add a contributing section or link to CONTRIBUTING.md".into(),
         "License" => "Add a license section or ensure a LICENSE file exists in the repo".into(),
-        "Acknowledgements" => "Add an acknowledgements section crediting contributors and inspirations".into(),
+        "Acknowledgements" => {
+            "Add an acknowledgements section crediting contributors and inspirations".into()
+        }
         "Has logo image" => "Add a project logo image (under 100px height) at the top".into(),
-        "Badge organization" => "Organize badges in groups of ≤5 per line, separated by blank lines".into(),
-        "Header hierarchy (no h4+)" => "Avoid h4+ headers — restructure content to use at most 3 levels".into(),
-        "Emoji in headers" => "Add emoji to section headers for visual navigation and personality".into(),
-        "Image/GIF count (≥2)" => "Add more screenshots or GIFs to visually demonstrate your project".into(),
-        "Collapsible sections" => "Use <details> tags for long content to keep the README scannable".into(),
-        "Code syntax highlighting" => "Add language identifiers to code blocks for syntax highlighting".into(),
+        "Badge organization" => {
+            "Organize badges in groups of ≤5 per line, separated by blank lines".into()
+        }
+        "Header hierarchy (no h4+)" => {
+            "Avoid h4+ headers — restructure content to use at most 3 levels".into()
+        }
+        "Emoji in headers" => {
+            "Add emoji to section headers for visual navigation and personality".into()
+        }
+        "Image/GIF count (≥2)" => {
+            "Add more screenshots or GIFs to visually demonstrate your project".into()
+        }
+        "Collapsible sections" => {
+            "Use <details> tags for long content to keep the README scannable".into()
+        }
+        "Code syntax highlighting" => {
+            "Add language identifiers to code blocks for syntax highlighting".into()
+        }
         "Link density" => "Add more links to related projects, docs, and references".into(),
-        "Dark/light mode support" => "Add dark/light mode image variants using #gh-dark-mode-only and #gh-light-mode-only".into(),
-        "Table usage" => "Use markdown tables for structured data like platform support or comparisons".into(),
-        "Line length discipline (≤80)" => "Keep non-code lines under 80 characters for better readability".into(),
+        "Dark/light mode support" => {
+            "Add dark/light mode image variants using #gh-dark-mode-only and #gh-light-mode-only"
+                .into()
+        }
+        "Table usage" => {
+            "Use markdown tables for structured data like platform support or comparisons".into()
+        }
+        "Line length discipline (≤80)" => {
+            "Keep non-code lines under 80 characters for better readability".into()
+        }
         "LICENSE file" => "Add a LICENSE file to the repository root".into(),
-        "CONTRIBUTING.md" => "Add a CONTRIBUTING.md with development setup and PR guidelines".into(),
+        "CONTRIBUTING.md" => {
+            "Add a CONTRIBUTING.md with development setup and PR guidelines".into()
+        }
         "CODE_OF_CONDUCT.md" => "Add a CODE_OF_CONDUCT.md (use Contributor Covenant)".into(),
         "SECURITY.md" => "Add a SECURITY.md with vulnerability reporting instructions".into(),
         "CHANGELOG.md" => "Add a CHANGELOG.md or use GitHub Releases for version history".into(),
         "CI badge present" => "Add a CI status badge to show build/test health at a glance".into(),
         "Test mention" => "Document how to run tests in the README or CONTRIBUTING.md".into(),
         "Version badge" => "Add a version badge (npm, crates.io, PyPI, or GitHub release)".into(),
-        "Support channels" => "Document where users can get help (Discord, Slack, Discussions, etc.)".into(),
-        "One-liner before installation" => "Move your project description above the installation section".into(),
+        "Support channels" => {
+            "Document where users can get help (Discord, Slack, Discussions, etc.)".into()
+        }
+        "One-liner before installation" => {
+            "Move your project description above the installation section".into()
+        }
         "Demo before API docs" => "Show a demo or screenshot before diving into API details".into(),
         "Features before contributing" => "List features before the contributing section".into(),
-        "Quick start before detailed install" => "Add a quick start section before detailed installation instructions".into(),
+        "Quick start before detailed install" => {
+            "Add a quick start section before detailed installation instructions".into()
+        }
         "Install before usage" => "Place installation instructions before usage examples".into(),
         "License at bottom" => "Move the license section to the end of the README".into(),
         _ => "Review and improve this aspect of your README".into(),

@@ -78,7 +78,7 @@ pub fn analyze(structure: &ReadmeStructure) -> FunnelResult {
         passed: oneliner_first,
         points: if oneliner_first { 3.0 } else { 0.0 },
         max_points: 3.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if oneliner_first { 3.0 } else { 0.0 };
 
@@ -97,7 +97,7 @@ pub fn analyze(structure: &ReadmeStructure) -> FunnelResult {
         passed: demo_first,
         points: if demo_first { 3.0 } else { 0.0 },
         max_points: 3.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if demo_first { 3.0 } else { 0.0 };
 
@@ -113,7 +113,7 @@ pub fn analyze(structure: &ReadmeStructure) -> FunnelResult {
         passed: features_first,
         points: if features_first { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if features_first { 2.0 } else { 0.0 };
 
@@ -128,7 +128,7 @@ pub fn analyze(structure: &ReadmeStructure) -> FunnelResult {
         passed: quick_first,
         points: if quick_first { 3.0 } else { 0.0 },
         max_points: 3.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if quick_first { 3.0 } else { 0.0 };
 
@@ -143,7 +143,7 @@ pub fn analyze(structure: &ReadmeStructure) -> FunnelResult {
         passed: install_first,
         points: if install_first { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if install_first { 2.0 } else { 0.0 };
 
@@ -161,7 +161,7 @@ pub fn analyze(structure: &ReadmeStructure) -> FunnelResult {
         passed: license_at_bottom,
         points: if license_at_bottom { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if license_at_bottom { 2.0 } else { 0.0 };
 

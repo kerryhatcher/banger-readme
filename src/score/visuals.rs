@@ -22,7 +22,7 @@ pub fn analyze(structure: &ReadmeStructure) -> VisualResult {
         passed: structure.has_logo,
         points: if structure.has_logo { 3.0 } else { 0.0 },
         max_points: 3.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if structure.has_logo { 3.0 } else { 0.0 };
 
@@ -32,7 +32,7 @@ pub fn analyze(structure: &ReadmeStructure) -> VisualResult {
         passed: structure.badges_organized,
         points: if structure.badges_organized { 3.0 } else { 0.0 },
         max_points: 3.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if structure.badges_organized { 3.0 } else { 0.0 };
 
@@ -43,7 +43,7 @@ pub fn analyze(structure: &ReadmeStructure) -> VisualResult {
         passed: !has_h4,
         points: if !has_h4 { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if !has_h4 { 2.0 } else { 0.0 };
 
@@ -59,7 +59,7 @@ pub fn analyze(structure: &ReadmeStructure) -> VisualResult {
         passed: has_emoji_headers,
         points: if has_emoji_headers { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_emoji_headers { 2.0 } else { 0.0 };
 
@@ -71,7 +71,7 @@ pub fn analyze(structure: &ReadmeStructure) -> VisualResult {
         passed: has_images,
         points: if has_images { 3.0 } else { 0.0 },
         max_points: 3.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_images { 3.0 } else { 0.0 };
 
@@ -82,7 +82,7 @@ pub fn analyze(structure: &ReadmeStructure) -> VisualResult {
         passed: has_collapsible,
         points: if has_collapsible { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_collapsible { 2.0 } else { 0.0 };
 
@@ -97,7 +97,7 @@ pub fn analyze(structure: &ReadmeStructure) -> VisualResult {
         passed: has_highlight,
         points: if has_highlight { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_highlight { 2.0 } else { 0.0 };
 
@@ -110,7 +110,7 @@ pub fn analyze(structure: &ReadmeStructure) -> VisualResult {
         passed: has_link_density,
         points: if has_link_density { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_link_density { 2.0 } else { 0.0 };
 
@@ -121,7 +121,7 @@ pub fn analyze(structure: &ReadmeStructure) -> VisualResult {
         passed: has_mode_support,
         points: if has_mode_support { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_mode_support { 2.0 } else { 0.0 };
 
@@ -132,7 +132,7 @@ pub fn analyze(structure: &ReadmeStructure) -> VisualResult {
         passed: has_tables,
         points: if has_tables { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_tables { 2.0 } else { 0.0 };
 
@@ -142,7 +142,7 @@ pub fn analyze(structure: &ReadmeStructure) -> VisualResult {
         passed: structure.line_length_ok,
         points: if structure.line_length_ok { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if structure.line_length_ok { 2.0 } else { 0.0 };
 

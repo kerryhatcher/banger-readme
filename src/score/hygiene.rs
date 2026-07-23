@@ -27,7 +27,16 @@ pub fn analyze(structure: &ReadmeStructure, repo_dir: Option<&Path>) -> HygieneR
 
     // 1. LICENSE file (3 pts)
     let has_license = if has_repo {
-        file_exists(dir, &["LICENSE", "LICENSE.md", "LICENSE.txt", "LICENCE", "LICENCE.md"])
+        file_exists(
+            dir,
+            &[
+                "LICENSE",
+                "LICENSE.md",
+                "LICENSE.txt",
+                "LICENCE",
+                "LICENCE.md",
+            ],
+        )
     } else {
         // Fall back to checking if README mentions license
         structure.raw.to_lowercase().contains("license")
@@ -37,7 +46,7 @@ pub fn analyze(structure: &ReadmeStructure, repo_dir: Option<&Path>) -> HygieneR
         passed: has_license,
         points: if has_license { 3.0 } else { 0.0 },
         max_points: 3.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_license { 3.0 } else { 0.0 };
 
@@ -52,7 +61,7 @@ pub fn analyze(structure: &ReadmeStructure, repo_dir: Option<&Path>) -> HygieneR
         passed: has_contrib,
         points: if has_contrib { 3.0 } else { 0.0 },
         max_points: 3.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_contrib { 3.0 } else { 0.0 };
 
@@ -67,7 +76,7 @@ pub fn analyze(structure: &ReadmeStructure, repo_dir: Option<&Path>) -> HygieneR
         passed: has_coc,
         points: if has_coc { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_coc { 2.0 } else { 0.0 };
 
@@ -82,7 +91,7 @@ pub fn analyze(structure: &ReadmeStructure, repo_dir: Option<&Path>) -> HygieneR
         passed: has_security,
         points: if has_security { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_security { 2.0 } else { 0.0 };
 
@@ -97,7 +106,7 @@ pub fn analyze(structure: &ReadmeStructure, repo_dir: Option<&Path>) -> HygieneR
         passed: has_changelog,
         points: if has_changelog { 1.0 } else { 0.0 },
         max_points: 1.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_changelog { 1.0 } else { 0.0 };
 
@@ -111,7 +120,7 @@ pub fn analyze(structure: &ReadmeStructure, repo_dir: Option<&Path>) -> HygieneR
         passed: has_ci,
         points: if has_ci { 3.0 } else { 0.0 },
         max_points: 3.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_ci { 3.0 } else { 0.0 };
 
@@ -127,7 +136,7 @@ pub fn analyze(structure: &ReadmeStructure, repo_dir: Option<&Path>) -> HygieneR
         passed: has_tests,
         points: if has_tests { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_tests { 2.0 } else { 0.0 };
 
@@ -136,13 +145,14 @@ pub fn analyze(structure: &ReadmeStructure, repo_dir: Option<&Path>) -> HygieneR
         || structure.raw.contains("npmjs.com")
         || structure.raw.contains("pypi.org")
         || structure.raw.contains("github.com") && structure.raw.contains("/v/")
-        || structure.raw.contains("img.shields.io") && structure.raw.to_lowercase().contains("version");
+        || structure.raw.contains("img.shields.io")
+            && structure.raw.to_lowercase().contains("version");
     checks.push(Check {
         name: "Version badge",
         passed: has_version_badge,
         points: if has_version_badge { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_version_badge { 2.0 } else { 0.0 };
 
@@ -157,7 +167,7 @@ pub fn analyze(structure: &ReadmeStructure, repo_dir: Option<&Path>) -> HygieneR
         passed: has_support,
         points: if has_support { 2.0 } else { 0.0 },
         max_points: 2.0,
-            confidence: 1.0,
+        confidence: 1.0,
     });
     score += if has_support { 2.0 } else { 0.0 };
 

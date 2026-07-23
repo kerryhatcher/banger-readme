@@ -49,10 +49,7 @@ pub fn find_readme(dir: &Path) -> Option<std::path::PathBuf> {
 }
 
 /// Run the full scoring pipeline against a README.
-pub fn score_readme(
-    raw: &str,
-    repo_dir: Option<&Path>,
-) -> ScoredReport {
+pub fn score_readme(raw: &str, repo_dir: Option<&Path>) -> ScoredReport {
     let structure = content::parse_structure(raw);
 
     let content_result = content::analyze(&structure);
@@ -61,10 +58,8 @@ pub fn score_readme(
     let funnel_result = funnel::analyze(&structure);
     let antipattern_result = antipatterns::analyze(&structure);
 
-    let raw_score = content_result.score
-        + visual_result.score
-        + hygiene_result.score
-        + funnel_result.score;
+    let raw_score =
+        content_result.score + visual_result.score + hygiene_result.score + funnel_result.score;
     let penalty = antipattern_result.penalty;
     let final_score = (raw_score - penalty).max(0.0);
     let (grade, label) = rules::grade(final_score);

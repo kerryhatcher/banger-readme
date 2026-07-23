@@ -16,8 +16,7 @@ pub static RE_BADGE_URL: LazyLock<Regex> = LazyLock::new(|| {
         .unwrap()
 });
 
-pub static RE_GIF: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?i)\.gif(\b|[?#])").unwrap());
+pub static RE_GIF: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?i)\.gif(\b|[?#])").unwrap());
 
 pub static RE_TOC_LINK: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\[([^\]]+)\]\(#([^)]+)\)").unwrap());
@@ -30,8 +29,7 @@ pub static RE_EMOJI: LazyLock<Regex> = LazyLock::new(|| {
 });
 
 pub static RE_PLACEHOLDER: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)coming\s*soon|TODO|TBD|work\s+in\s+progress|under\s+construction")
-        .unwrap()
+    Regex::new(r"(?i)coming\s*soon|TODO|TBD|work\s+in\s+progress|under\s+construction").unwrap()
 });
 
 pub static RE_DETAILS_TAG: LazyLock<Regex> =
@@ -67,7 +65,6 @@ pub const DEMO_PATTERNS: &[&str] = &["demo", "screenshot", "preview"];
 // ---------------------------------------------------------------------------
 // Weights
 // ---------------------------------------------------------------------------
-
 
 // ---------------------------------------------------------------------------
 // Grade scale

@@ -147,9 +147,7 @@ fn detect_open_plugin(dir: &Path, manifest_path: &Path) -> Result<PluginType> {
     let mut skills = Vec::new();
 
     if skills_dir.exists() && skills_dir.is_dir() {
-        for entry in std::fs::read_dir(&skills_dir)
-            .context("Failed to read skills directory")?
-        {
+        for entry in std::fs::read_dir(&skills_dir).context("Failed to read skills directory")? {
             let entry = entry?;
             let skill_path = entry.path();
             if skill_path.is_dir() {
