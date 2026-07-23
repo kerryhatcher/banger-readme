@@ -2,7 +2,7 @@
 name = "banger-readme"
 version = "0.2.2"
 edition = "2021"
-description = "A CLI tool to install plugins for the Pi coding harness and Claude Code"
+description = "A CLI for building and rating great READMEs — scores against research-backed best practices and bootstraps the rmb skill into Pi and Claude Code"
 license = "MIT"
 repository = "https://github.com/kerryhatcher/banger-readme"
 

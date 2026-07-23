@@ -3,11 +3,8 @@
 ## 0.1.0 (Unreleased)
 
 ### Added
-- `rmb install` — Install plugins from git repos to Pi and Claude Code
-- `rmb list` — List installed plugins across both systems
-- `rmb remove` — Remove plugins from either or both targets
 - `rmb score` — Score READMEs against 50+ research-backed criteria
-- Auto-detection of plugin type (Pi skill, Claude Code plugin, or both)
+- `rmb install` — Bootstrap the rmb README skill into Pi and Claude Code
 - Five-category scoring engine: content, visuals, hygiene, funneling, anti-patterns
 - JSON output mode for CI integration
 - `--check` and `--threshold` flags for CI gating

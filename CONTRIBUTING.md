@@ -37,15 +37,15 @@ cargo run -- score .
 # Score a remote README
 cargo run -- score https://raw.githubusercontent.com/user/repo/main/README.md --no-hygiene
 
-# Install a plugin
-cargo run -- install https://github.com/user/my-plugin
+# Bootstrap the rmb skill into your agents
+cargo run -- install
 ```
 
 ## Project Structure
 
 ```
 src/
-├── main.rs          # CLI entry point (install, list, remove, score commands)
+├── main.rs          # CLI entry point (score, install commands)
 ├── config.rs        # Path detection for Pi and Claude Code directories
 ├── git.rs           # Git clone, repo slug extraction, HEAD SHA
 ├── install.rs       # Installation logic for both targets

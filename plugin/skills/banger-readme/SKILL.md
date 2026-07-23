@@ -176,7 +176,7 @@ Write the README following the **14-section cognitive funneling structure** back
 ```
 
 **Content rules (from research):**
-- **One-liner:** Single paragraph, 30–400 chars, no bullets. Use bold for the project name. Example: `**rmb** is a CLI tool to install plugins for the Pi coding harness and Claude Code.`
+- **One-liner:** Single paragraph, 30–400 chars, no bullets. Use bold for the project name. Example: `**rmb** is a CLI for building and rating great READMEs.`
 - **Demo:** If the project is a CLI tool, include a terminal screenshot or ASCII cast. If it's a library, show a code example. If it's a web app, show a screenshot. Use `<p align="center">` for centering.
 - **Features:** Use emoji-prefixed bullets. Each feature should be one line with a brief explanation. Link to docs where relevant.
 - **Quick Start:** 3–5 copy-paste-ready commands. The user should be able to get something working in 60 seconds. Use fenced code blocks with language identifiers.

@@ -7,7 +7,7 @@ use crate::config::InstallPaths;
 use crate::git;
 use crate::plugin::PluginType;
 
-/// Install a plugin from a local directory to Pi and/or Claude Code.
+/// Install the bundled rmb plugin from a local directory to Pi and/or Claude Code.
 pub fn install_from_dir(
     dir: &Path,
     plugin: &PluginType,

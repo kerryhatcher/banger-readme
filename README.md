@@ -11,7 +11,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
 </p>
 
-**rmb** is a CLI tool that installs plugins for the [Pi coding harness](https://github.com/earendil-works/pi) and [Claude Code](https://docs.anthropic.com/en/docs/claude-code), and scores READMEs against research-backed best practices.
+**rmb** is a CLI for building and rating great READMEs. It **scores** any README against 50+ research-backed criteria — locally, no AI, no API calls — and **bootstraps the rmb skill** into your coding agents ([Pi](https://github.com/earendil-works/pi) and [Claude Code](https://docs.anthropic.com/en/docs/claude-code)) so they can author README files (logo, header, and all 14 sections) that actually score well.
 
 ## 📋 Table of Contents
 
@@ -19,7 +19,7 @@
 - [Quick Start](#-quick-start)
 - [Why rmb?](#-why-rmb)
 - [README Scoring](#-readme-scoring)
-- [Plugin Installer](#-plugin-installer)
+- [Agent Setup](#-agent-setup)
 - [Usage](#-usage)
 - [Documentation](#-documentation)
 - [Installation](#-installation)
@@ -29,32 +29,30 @@
 
 ## 🎯 Why rmb?
 
-Most open source READMEs are mediocre. Research shows that a great README can **5× your star conversion rate** — but most projects never invest the time. `rmb` solves two problems:
+Most open source READMEs are mediocre. Research shows that a great README can **5× your star conversion rate** — but most projects never invest the time. `rmb` attacks that from both ends:
 
-1. **Plugin management across tools** — Pi and Claude Code use different plugin directories and formats. `rmb` unifies installation, listing, and removal in one command.
-2. **README quality measurement** — There's no objective way to know if your README is good. `rmb score` gives you a deterministic, research-backed score with specific, ranked recommendations.
-
-Both features work without any AI or API calls — everything runs locally in milliseconds.
+1. **Measure what you have** — There's no objective way to know if your README is good. `rmb score` gives a deterministic, research-backed score with specific, ranked recommendations — no LLM, no API calls, results in milliseconds.
+2. **Build a better one** — `rmb install` bootstraps the rmb skill into your coding agent, so it can author READMEs (logo, header, all 14 sections) against the same research the scorer checks.
 
 ## ✨ Features
 
-- **📦 Plugin installer** — Clone and install plugins from any git URL to Pi and Claude Code in one command
-- **🔍 Auto-detection** — Detects whether a repo is a Pi skill, Claude Code plugin, or both
 - **📊 README scoring** — Scores any README against 50+ criteria across 5 categories — no LLM required
 - **🎯 Actionable feedback** — Every failed check comes with a specific, ranked recommendation
-- **📋 List & remove** — See what's installed and cleanly uninstall from either or both targets
+- **🤖 Agent bootstrap** — One command drops the rmb README skill into Pi and Claude Code
+- **🔒 Fully local** — Scoring is deterministic and offline; no AI, no API keys, no telemetry
+- **⚙️ CI-friendly** — `--json` output and `--check --threshold` for failing builds on low scores
 
 ## 🚀 Quick Start
 
 ```bash
-# Install
+# Install the CLI
 cargo install banger-readme
 
 # Score a README
 rmb score .
 
-# Install a plugin
-rmb install https://github.com/user/my-plugin
+# Bootstrap the rmb skill into your agents (Pi + Claude Code)
+rmb install
 ```
 
 ## 📊 README Scoring
@@ -87,47 +85,29 @@ rmb install https://github.com/user/my-plugin
 | Cognitive Funneling | 15 pts | Section ordering: broad→specific, one-liner before install, license at bottom |
 | Anti-Patterns | −15 pts | Deductions for placeholders, duplicate titles, badge abuse, wall of text |
 
-## 📦 Plugin Installer
+## 🤖 Agent Setup
 
-### Install
-
-```bash
-# Install to both Pi and Claude Code (default)
-rmb install https://github.com/user/my-plugin
-
-# Install a specific branch
-rmb install https://github.com/user/my-plugin --branch main
-
-# Only install for Pi
-rmb install https://github.com/user/my-plugin --pi-only
-
-# Only install for Claude Code
-rmb install https://github.com/user/my-plugin --claude-only
-```
-
-### List
+`rmb install` bootstraps the **rmb README skill** into your coding agents. Once installed, your agent can author READMEs — generating logos and headers, structuring all 14 sections, and following the same research `rmb score` checks against.
 
 ```bash
-rmb list           # All plugins
-rmb list --pi      # Pi skills only
-rmb list --claude  # Claude Code plugins only
+# Bootstrap into both Pi and Claude Code (default)
+rmb install
+
+# Only Pi
+rmb install --pi-only
+
+# Only Claude Code
+rmb install --claude-only
 ```
 
-### Remove
+It fetches the bundled `banger-readme` plugin from GitHub and installs it to:
 
-```bash
-rmb remove my-plugin           # From both
-rmb remove my-plugin --pi      # From Pi only
-rmb remove my-plugin --claude  # From Claude Code only
-```
-
-### How Detection Works
-
-| File found | Plugin type |
+| Target | Location |
 |---|---|
-| `SKILL.md` | Pi skill → installs to `~/.pi/agent/skills/<name>/` |
-| `.claude-plugin.json` or `plugin.json` | Claude Code plugin → installs to `~/.claude/plugins/cache/` |
-| Both | Installs to both targets |
+| Pi coding harness | `~/.pi/agent/skills/banger-readme/` |
+| Claude Code | `~/.claude/plugins/cache/` (skills symlinked into `~/.claude/skills/`) |
+
+Re-running `rmb install` replaces the existing installation, so it doubles as an update command.
 
 ## 📖 Usage
 
@@ -151,17 +131,15 @@ rmb score . --check --threshold 70
 </details>
 
 <details>
-<summary><b>📦 Managing plugins</b></summary>
+<summary><b>🤖 Bootstrapping into agents</b></summary>
 
 ```bash
-# Install a plugin to both Pi and Claude Code
-rmb install https://github.com/user/my-plugin
+# Install the rmb skill into both Pi and Claude Code
+rmb install
 
-# List all installed plugins
-rmb list
-
-# Remove a plugin
-rmb remove my-plugin
+# Only one target
+rmb install --pi-only
+rmb install --claude-only
 ```
 
 </details>
