@@ -13,7 +13,7 @@ Thanks for your interest in contributing! This document covers how to set up you
 ### Build
 
 ```bash
-git clone https://github.com/kwhatcher/banger-readme
+git clone https://github.com/kerryhatcher/banger-readme
 cd banger-readme
 cargo build
 ```
@@ -87,7 +87,7 @@ A maintainer will review your PR. CI must pass before merging.
 
 ## Finding Something to Work On
 
-- Check the [open issues](https://github.com/kwhatcher/banger-readme/issues) for bugs and feature requests
+- Check the [open issues](https://github.com/kerryhatcher/banger-readme/issues) for bugs and feature requests
 - Look for issues labeled `good first issue` for beginner-friendly tasks
 - The [scoring engine design doc](docs/scoring-engine-design.md) has planned enhancements
 
@@ -97,4 +97,4 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 
 ## Questions?
 
-Open a [GitHub Discussion](https://github.com/kwhatcher/banger-readme/discussions) or file an issue.
+Open a [GitHub Discussion](https://github.com/kerryhatcher/banger-readme/discussions) or file an issue.

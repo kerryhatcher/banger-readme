@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kwhatcher/banger-readme/actions"><img src="https://github.com/kwhatcher/banger-readme/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/kerryhatcher/banger-readme/actions"><img src="https://github.com/kerryhatcher/banger-readme/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://crates.io/crates/rmb"><img src="https://img.shields.io/crates/v/rmb.svg?label=version" alt="Version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
 </p>
@@ -48,7 +48,7 @@ Both features work without any AI or API calls — everything runs locally in mi
 
 ```bash
 # Install
-cargo install --git https://github.com/kwhatcher/banger-readme
+cargo install --git https://github.com/kerryhatcher/banger-readme
 
 # Score a README
 rmb score .
@@ -186,7 +186,7 @@ rmb remove my-plugin
 ### From Source
 
 ```bash
-git clone https://github.com/kwhatcher/banger-readme
+git clone https://github.com/kerryhatcher/banger-readme
 cd banger-readme
 cargo build --release
 ```
@@ -196,7 +196,7 @@ The binary will be at `target/release/rmb`.
 ### Via Cargo
 
 ```bash
-cargo install --git https://github.com/kwhatcher/banger-readme
+cargo install --git https://github.com/kerryhatcher/banger-readme
 ```
 
 ### Running Tests
@@ -209,16 +209,16 @@ cargo fmt -- --check
 
 ## 💬 Getting Help
 
-- **Questions?** Open a [GitHub Discussion](https://github.com/kwhatcher/banger-readme/discussions)
-- **Bug?** File an [issue](https://github.com/kwhatcher/banger-readme/issues)
+- **Questions?** Open a [GitHub Discussion](https://github.com/kerryhatcher/banger-readme/discussions)
+- **Bug?** File an [issue](https://github.com/kerryhatcher/banger-readme/issues)
 - **Security issue?** See [SECURITY.md](SECURITY.md)
 
 ## 🤝 Contributing
 
 We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, project structure, code standards, and the pull request process.
 
-<a href="https://github.com/kwhatcher/banger-readme/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=kwhatcher/banger-readme" />
+<a href="https://github.com/kerryhatcher/banger-readme/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=kerryhatcher/banger-readme" />
 </a>
 
 ## 📄 License
