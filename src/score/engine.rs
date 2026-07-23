@@ -7,6 +7,8 @@ use crate::score::image_heuristics;
 use crate::score::image_similarity;
 #[cfg(feature = "links")]
 use crate::score::link_check;
+#[cfg(feature = "multi-lang")]
+use crate::score::multi_lang;
 use crate::score::report::ScoredReport;
 use crate::score::rules;
 use crate::score::text_quality;
@@ -55,7 +57,7 @@ pub fn find_readme(dir: &Path) -> Option<std::path::PathBuf> {
 }
 
 /// Run the full scoring pipeline against a README.
-pub fn score_readme(raw: &str, repo_dir: Option<&Path>, deep: bool, links: bool) -> ScoredReport {
+pub fn score_readme(raw: &str, repo_dir: Option<&Path>, deep: bool, links: bool, multi_lang: bool) -> ScoredReport {
     let structure = content::parse_structure(raw);
 
     let content_result = content::analyze(&structure);
@@ -94,11 +96,39 @@ pub fn score_readme(raw: &str, repo_dir: Option<&Path>, deep: bool, links: bool)
         None
     };
 
-    let raw_score =
+    // Multi-language is gated behind --multi-lang
+    let multi_lang_result = if multi_lang {
+        #[cfg(feature = "multi-lang")]
+        {
+            Some(multi_lang::analyze(&structure, repo_dir))
+        }
+        #[cfg(not(feature = "multi-lang"))]
+        {
+            None
+        }
+    } else {
+        None
+    };
+
+    #[allow(unused_mut)]
+    let mut raw_score =
         content_result.score + visual_result.score + hygiene_result.score + funnel_result.score
-            + text_quality_result.score + image_heuristics_result.score
-            + image_similarity_result.as_ref().map_or(0.0, |r| r.score)
-            + link_check_result.as_ref().map_or(0.0, |r| r.score);
+            + text_quality_result.score + image_heuristics_result.score;
+
+    #[cfg(feature = "deep")]
+    if let Some(ref r) = image_similarity_result {
+        raw_score += r.score;
+    }
+
+    #[cfg(feature = "links")]
+    if let Some(ref r) = link_check_result {
+        raw_score += r.score;
+    }
+
+    #[cfg(feature = "multi-lang")]
+    if let Some(ref r) = multi_lang_result {
+        raw_score += r.score;
+    }
     let penalty = antipattern_result.penalty;
     let final_score = (raw_score - penalty).max(0.0);
     let (grade, label) = rules::grade(final_score);
@@ -116,5 +146,6 @@ pub fn score_readme(raw: &str, repo_dir: Option<&Path>, deep: bool, links: bool)
         image_heuristics: image_heuristics_result,
         image_similarity: image_similarity_result,
         link_check: link_check_result,
+        multi_lang: multi_lang_result,
     }
 }

@@ -63,6 +63,10 @@ enum Commands {
         /// Enable link checking (broken link detection).
         #[arg(long)]
         links: bool,
+
+        /// Enable multi-language README scoring.
+        #[arg(long)]
+        multi_lang: bool,
     },
 }
 
@@ -88,8 +92,9 @@ fn main() -> Result<()> {
             no_hygiene,
             deep,
             links,
+            multi_lang,
         } => {
-            cmd_score(&target, json, check, threshold, no_hygiene, deep, links)?;
+            cmd_score(&target, json, check, threshold, no_hygiene, deep, links, multi_lang)?;
         }
     }
 
@@ -168,6 +173,7 @@ fn cmd_score(
     no_hygiene: bool,
     deep: bool,
     links: bool,
+    multi_lang: bool,
 ) -> Result<()> {
     use std::path::Path;
 
@@ -203,7 +209,7 @@ fn cmd_score(
         }
     };
 
-    let report = score::engine::score_readme(&raw, repo_dir.map(|p| p as &Path), deep, links);
+    let report = score::engine::score_readme(&raw, repo_dir.map(|p| p as &Path), deep, links, multi_lang);
 
     if json {
         report.print_json();

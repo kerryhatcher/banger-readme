@@ -8,6 +8,8 @@ pub mod image_heuristics;
 pub mod image_similarity;
 #[cfg(feature = "links")]
 pub mod link_check;
+#[cfg(feature = "multi-lang")]
+pub mod multi_lang;
 pub mod report;
 pub mod rules;
 pub mod text_quality;

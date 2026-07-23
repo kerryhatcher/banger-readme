@@ -7,6 +7,8 @@ use crate::score::image_heuristics::ImageHeuristicsResult;
 use crate::score::image_similarity::ImageSimilarityResult;
 #[cfg(feature = "links")]
 use crate::score::link_check::LinkCheckResult;
+#[cfg(feature = "multi-lang")]
+use crate::score::multi_lang::MultiLangResult;
 use crate::score::text_quality::TextQualityResult;
 use crate::score::visuals::VisualResult;
 use colored::*;
@@ -32,6 +34,10 @@ pub struct ScoredReport {
     pub link_check: Option<LinkCheckResult>,
     #[cfg(not(feature = "links"))]
     pub link_check: Option<()>,
+    #[cfg(feature = "multi-lang")]
+    pub multi_lang: Option<MultiLangResult>,
+    #[cfg(not(feature = "multi-lang"))]
+    pub multi_lang: Option<()>,
 }
 
 impl ScoredReport {
@@ -146,6 +152,42 @@ impl ScoredReport {
             }
             #[cfg(not(feature = "links"))]
             let _ = lc;
+        }
+
+        // Multi-Language (only when --multi-lang is used)
+        if let Some(ref ml) = self.multi_lang {
+            #[cfg(feature = "multi-lang")]
+            {
+                self.print_category(
+                    "Multi-Language",
+                    ml.score,
+                    ml.max,
+                    &ml.checks,
+                );
+                if !ml.translations.is_empty() {
+                    println!("│ Translations found:");
+                    for t in &ml.translations {
+                        let grade_str = t.grade.map_or("N/A".into(), |g| format!("grade {:.1}", g));
+                        let match_str = if t.sections_match { "✅" } else { "⚠️" };
+                        println!(
+                            "│   {} {} ({}) — {} sections {}",
+                            match_str,
+                            t.path.dimmed(),
+                            t.language,
+                            grade_str,
+                            if t.sections_match {
+                                "match".dimmed()
+                            } else {
+                                "mismatch".red()
+                            }
+                        );
+                    }
+                    println!("└──────────────────────────────────────────┘");
+                    println!();
+                }
+            }
+            #[cfg(not(feature = "multi-lang"))]
+            let _ = ml;
         }
 
         // Anti-patterns
@@ -345,6 +387,20 @@ impl ScoredReport {
             }
         }
 
+        #[cfg(feature = "multi-lang")]
+        if let Some(ref ml) = self.multi_lang {
+            for check in &ml.checks {
+                if !check.passed {
+                    recs.push(Recommendation {
+                        name: check.name.to_string(),
+                        points: check.max_points,
+                        impact: "medium",
+                        message: recommendation_message(check.name),
+                    });
+                }
+            }
+        }
+
         // Sort by points descending (highest impact first)
         recs.sort_by(|a, b| {
             b.points
@@ -491,6 +547,14 @@ fn recommendation_message(name: &str) -> String {
         }
         "Valid anchor fragments" => {
             "Fix broken anchor links — headings may have been renamed or removed".into()
+        }
+        "Translation readability" => {
+            "Ensure translated READMEs maintain accessible reading levels for their audience"
+                .into()
+        }
+        "Translation completeness" => {
+            "Keep translations in sync — update non-English READMEs when sections change"
+                .into()
         }
         _ => "Review and improve this aspect of your README".into(),
     }
