@@ -1,6 +1,6 @@
 [package]
 name = "banger-readme"
-version = "0.2.2"
+version = "0.3.0"
 edition = "2021"
 description = "A CLI for building and rating great READMEs — scores against research-backed best practices and bootstraps the rmb skill into Pi and Claude Code"
 license = "MIT"

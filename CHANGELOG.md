@@ -6,6 +6,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-22
+
 ### Changed
 - **Scoped `rmb` to its purpose: building and rating READMEs.** `rmb install` is now
   bootstrap-only — it installs the bundled rmb README skill into Pi and Claude Code.
@@ -48,7 +50,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Implicit section detection (code blocks as quick starts, docs links as API refs).
 - Benchmark percentiles for score context and a partial-credit system for close matches.
 
-[Unreleased]: https://github.com/kerryhatcher/banger-readme/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/kerryhatcher/banger-readme/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/kerryhatcher/banger-readme/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/kerryhatcher/banger-readme/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/kerryhatcher/banger-readme/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/kerryhatcher/banger-readme/compare/v0.1.0...v0.2.0
