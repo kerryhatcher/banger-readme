@@ -1,0 +1,25 @@
+[package]
+name = "rmb"
+version = "0.1.0"
+edition = "2021"
+description = "A CLI tool to install plugins for the Pi coding harness and Claude Code"
+license = "MIT"
+repository = "https://github.com/kwhatcher/banger-readme"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+git2 = "0.19"
+dirs = "5"
+tempfile = "3"
+anyhow = "1"
+thiserror = "2"
+log = "0.4"
+env_logger = "0.11"
+colored = "2"
+dialoguer = "0.11"
+regex = "1"
+reqwest = { version = "0.12", features = ["blocking"] }
+pulldown-cmark = "0.12"
