@@ -3,6 +3,8 @@ use crate::score::content::ContentResult;
 use crate::score::funnel::FunnelResult;
 use crate::score::hygiene::HygieneResult;
 use crate::score::image_heuristics::ImageHeuristicsResult;
+#[cfg(feature = "deep")]
+use crate::score::image_similarity::ImageSimilarityResult;
 use crate::score::text_quality::TextQualityResult;
 use crate::score::visuals::VisualResult;
 use colored::*;
@@ -20,6 +22,10 @@ pub struct ScoredReport {
     pub antipatterns: AntipatternResult,
     pub text_quality: TextQualityResult,
     pub image_heuristics: ImageHeuristicsResult,
+    #[cfg(feature = "deep")]
+    pub image_similarity: Option<ImageSimilarityResult>,
+    #[cfg(not(feature = "deep"))]
+    pub image_similarity: Option<()>,
 }
 
 impl ScoredReport {
@@ -89,6 +95,21 @@ impl ScoredReport {
             self.image_heuristics.max,
             &self.image_heuristics.checks,
         );
+
+        // Image Similarity (only when --deep is used)
+        if let Some(ref img_sim) = self.image_similarity {
+            #[cfg(feature = "deep")]
+            {
+                self.print_category(
+                    "Image Similarity",
+                    img_sim.score,
+                    img_sim.max,
+                    &img_sim.checks,
+                );
+            }
+            #[cfg(not(feature = "deep"))]
+            let _ = img_sim;
+        }
 
         // Anti-patterns
         if !self.antipatterns.findings.is_empty() {
@@ -255,6 +276,20 @@ impl ScoredReport {
             }
         }
 
+        #[cfg(feature = "deep")]
+        if let Some(ref img_sim) = self.image_similarity {
+            for check in &img_sim.checks {
+                if !check.passed {
+                    recs.push(Recommendation {
+                        name: check.name.to_string(),
+                        points: check.max_points,
+                        impact: "medium",
+                        message: recommendation_message(check.name),
+                    });
+                }
+            }
+        }
+
         // Sort by points descending (highest impact first)
         recs.sort_by(|a, b| {
             b.points
@@ -385,6 +420,13 @@ fn recommendation_message(name: &str) -> String {
         "Image format optimized" => {
             "Optimize images — use SVG for logos, PNG for screenshots, keep files under 1MB"
                 .into()
+        }
+        "Dark/light mode distinctiveness" => {
+            "Your dark and light mode images look identical — adapt colors for each mode"
+                .into()
+        }
+        "No placeholder images" => {
+            "Replace placeholder images with real screenshots or project graphics".into()
         }
         _ => "Review and improve this aspect of your README".into(),
     }

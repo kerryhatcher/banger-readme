@@ -87,7 +87,7 @@ pub fn analyze(structure: &ReadmeStructure, repo_dir: Option<&Path>) -> ImageHeu
 }
 
 /// Extract relative local image paths from markdown and HTML.
-fn extract_local_image_paths(raw: &str) -> Vec<String> {
+pub fn extract_local_image_paths(raw: &str) -> Vec<String> {
     let mut paths = Vec::new();
 
     // Markdown images: ![alt](path)

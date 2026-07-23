@@ -4,6 +4,8 @@ pub mod engine;
 pub mod funnel;
 pub mod hygiene;
 pub mod image_heuristics;
+#[cfg(feature = "deep")]
+pub mod image_similarity;
 pub mod report;
 pub mod rules;
 pub mod text_quality;

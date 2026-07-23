@@ -3,6 +3,8 @@ use crate::score::content;
 use crate::score::funnel;
 use crate::score::hygiene;
 use crate::score::image_heuristics;
+#[cfg(feature = "deep")]
+use crate::score::image_similarity;
 use crate::score::report::ScoredReport;
 use crate::score::rules;
 use crate::score::text_quality;
@@ -51,7 +53,7 @@ pub fn find_readme(dir: &Path) -> Option<std::path::PathBuf> {
 }
 
 /// Run the full scoring pipeline against a README.
-pub fn score_readme(raw: &str, repo_dir: Option<&Path>) -> ScoredReport {
+pub fn score_readme(raw: &str, repo_dir: Option<&Path>, deep: bool) -> ScoredReport {
     let structure = content::parse_structure(raw);
 
     let content_result = content::analyze(&structure);
@@ -62,9 +64,24 @@ pub fn score_readme(raw: &str, repo_dir: Option<&Path>) -> ScoredReport {
     let text_quality_result = text_quality::analyze(&structure);
     let image_heuristics_result = image_heuristics::analyze(&structure, repo_dir);
 
+    // Image similarity is gated behind --deep
+    let image_similarity_result = if deep {
+        #[cfg(feature = "deep")]
+        {
+            Some(image_similarity::analyze(&structure, repo_dir))
+        }
+        #[cfg(not(feature = "deep"))]
+        {
+            None
+        }
+    } else {
+        None
+    };
+
     let raw_score =
         content_result.score + visual_result.score + hygiene_result.score + funnel_result.score
-            + text_quality_result.score + image_heuristics_result.score;
+            + text_quality_result.score + image_heuristics_result.score
+            + image_similarity_result.as_ref().map_or(0.0, |r| r.score);
     let penalty = antipattern_result.penalty;
     let final_score = (raw_score - penalty).max(0.0);
     let (grade, label) = rules::grade(final_score);
@@ -80,5 +97,6 @@ pub fn score_readme(raw: &str, repo_dir: Option<&Path>) -> ScoredReport {
         antipatterns: antipattern_result,
         text_quality: text_quality_result,
         image_heuristics: image_heuristics_result,
+        image_similarity: image_similarity_result,
     }
 }

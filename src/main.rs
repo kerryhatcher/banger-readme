@@ -55,6 +55,10 @@ enum Commands {
         /// Skip project hygiene checks (for remote URLs without repo access).
         #[arg(long)]
         no_hygiene: bool,
+
+        /// Enable deep analysis (image similarity comparisons).
+        #[arg(long)]
+        deep: bool,
     },
 }
 
@@ -78,8 +82,9 @@ fn main() -> Result<()> {
             check,
             threshold,
             no_hygiene,
+            deep,
         } => {
-            cmd_score(&target, json, check, threshold, no_hygiene)?;
+            cmd_score(&target, json, check, threshold, no_hygiene, deep)?;
         }
     }
 
@@ -156,6 +161,7 @@ fn cmd_score(
     check: bool,
     threshold: u32,
     no_hygiene: bool,
+    deep: bool,
 ) -> Result<()> {
     use std::path::Path;
 
@@ -191,7 +197,7 @@ fn cmd_score(
         }
     };
 
-    let report = score::engine::score_readme(&raw, repo_dir.map(|p| p as &Path));
+    let report = score::engine::score_readme(&raw, repo_dir.map(|p| p as &Path), deep);
 
     if json {
         report.print_json();
